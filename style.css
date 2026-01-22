@@ -1,285 +1,126 @@
-/* 
-  Pastel Design Studio
-  Theme & Core Styles
-*/
-
+/* CSS Variables for Dynamic non-Tailwind styles */
 :root {
-  /* Pastel Palette */
-  --bg-app: #FDF6F9; /* Very light pinkish white */
-  --bg-panel: rgba(255, 255, 255, 0.75);
-  --bg-artboard: #FFFFFF;
-  
-  --primary: #9FA0FF; /* Soft Periwinkle */
-  --primary-hover: #8889EE;
-  --accent: #FFB7B2; /* Pastel Red/Salmon */
-  
-  --text-main: #4A4A68;
-  --text-muted: #8E8EA8;
-  
-  --border-light: rgba(74, 74, 104, 0.1);
-  --shadow-soft: 0 8px 32px rgba(31, 38, 135, 0.07);
-  --shadow-panel: 0 4px 12px rgba(0, 0, 0, 0.03);
-  
-  --glass-border: 1px solid rgba(255, 255, 255, 0.6);
-  --radius-lg: 16px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
-
-  /* Grid System */
-  --header-height: 60px;
-  --sidebar-width: 260px;
-  --tools-width: 80px;
+  --scroll-thumb: #e2e8f0;
+  --scroll-thumb-hover: #cbd5e1;
+  --range-thumb: #8b5cf6;
+  --range-track: #e2e8f0;
+  --grid-bg: #ffffff;
+  --grid-dot: #cbd5e1;
+  --grid-bg-color: #f8fafc;
+  /* slate-50 */
+  --primary: #a855f7;
+  /* Purple-500 matching tailwind */
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* Dark Mode Overrides */
+.dark {
+  --scroll-thumb: #404040;
+  --scroll-thumb-hover: #525252;
+  --range-thumb: #a78bfa;
+  --range-track: #262626;
+  --grid-bg: #171717;
+  --grid-dot: #404040;
+  --grid-bg-color: #171717;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+}
+
+/* Custom Range Slider */
+input[type=range] {
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--range-thumb);
+  cursor: pointer;
+  margin-top: -6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  border: 2px solid transparent;
+  outline: 2px solid white;
+}
+
+.dark input[type=range]::-webkit-slider-thumb {
+  outline: 2px solid #171717;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: var(--range-track);
+  border-radius: 2px;
+}
+
+/* Grid Background for Canvas */
+.canvas-grid {
+  background-color: var(--grid-bg-color);
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 body {
-  font-family: 'Outfit', sans-serif;
-  background-color: var(--bg-app);
-  color: var(--text-main);
-  height: 100vh;
-  overflow: hidden;
-  user-select: none; /* Prevent text selection UI everywhere except inputs */
+  font-family: 'Nunito', sans-serif;
 }
 
-/* App Grid Layout */
-.app-container {
-  display: grid;
-  grid-template-areas:
-    "header header header"
-    "tools canvas properties";
-  grid-template-columns: var(--tools-width) 1fr var(--sidebar-width);
-  grid-template-rows: var(--header-height) 1fr;
-  height: 100vh;
-  width: 100vw;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.brand-font {
+  font-family: 'Poppins', sans-serif;
 }
 
-/* --- Type & Inputs --- */
-input, button, textarea {
-  font-family: inherit;
-  outline: none;
-}
+/* 
+   Functional Styles (Re-implemented for the new UI) 
+   These are essential for the JS logic (selection handles, etc.)
+*/
 
-/* Glassmorphism Panel Mixin */
-.glass-panel {
-  background: var(--bg-panel);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: var(--glass-border);
-}
-
-/* --- Header --- */
-.top-bar {
-  grid-area: header;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  background: rgba(255,255,255,0.8);
-  border-bottom: 1px solid var(--border-light);
-  z-index: 100;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-main);
-}
-.logo h1 {
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-.logo-icon {
-  font-size: 20px;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.divider {
-  width: 1px;
-  height: 24px;
-  background: var(--border-light);
-  margin: 0 8px;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: white;
-  box-shadow: 0 4px 10px rgba(159, 160, 255, 0.3);
-}
-.btn-primary:hover {
-  background: var(--primary-hover);
-  transform: translateY(-1px);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--text-main);
-  border: 1px solid var(--border-light);
-}
-.btn-secondary:hover {
-  background: white;
-  border-color: var(--primary);
-}
-
-/* --- Left Sidebar (Tools) --- */
-.left-panel {
-  grid-area: tools;
-  background: white;
-  border-right: 1px solid var(--border-light);
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  gap: 24px;
-  z-index: 50;
-}
-
-.panel-header {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.tools-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.tool-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 12px 8px;
-  background: transparent;
-  border-radius: var(--radius-md);
-  color: var(--text-muted);
-  transition: all 0.2s;
-}
-
-.tool-btn .icon {
-  font-size: 20px;
-}
-.tool-btn .label {
-  font-size: 10px;
-}
-
-.tool-btn:hover {
-  background: #F5F5FF;
-  color: var(--primary);
-}
-.tool-btn.active {
-  background: #EEECFF;
-  color: var(--primary);
-  box-shadow: inset 0 0 0 1px var(--primary);
-}
-
-.shortcuts-info {
-  margin-top: auto;
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-.shortcuts-info code {
-  background: #F0F0F0;
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-family: inherit;
-  font-weight: 600;
-}
-
-/* --- Center (Canvas) --- */
-.canvas-area {
-  grid-area: canvas;
-  background-color: var(--bg-app);
-  background-image: radial-gradient(var(--border-light) 1px, transparent 1px);
-  background-size: 20px 20px; /* Dot pattern */
-  position: relative;
-  overflow: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  /* Shadow to define artboard bounds clearly */
-  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-}
-
-.artboard {
-  width: 800px;
-  height: 600px;
-  background: var(--bg-artboard);
-  border-radius: var(--radius-lg);
-  position: relative;
-  overflow: hidden; /* Elements clipped to artboard */
-  transform-origin: center;
-}
-
-/* Use a separate interaction layer if needed, or just interacting with artboard directly */
-
-/* Rendered Elements */
 .element {
   position: absolute;
   cursor: grab;
-  /* Smooth transitions for programmatic updates, 
-     but we might disable this during drag via JS class for performance */
   user-select: none;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  /* Ensure content stays inside */
 }
-.element.text-element {
-  background: transparent !important; /* Text usually transparent bg unless set */
-  padding: 4px;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
+
 .element:active {
   cursor: grabbing;
 }
 
-/* Selection State */
 .element.selected {
   outline: 2px solid var(--primary);
-  z-index: 1000 !important; /* Temporarily bring to front visually or handle via JS? Better keep Z-index logic strict.
-                             For now, we rely on the handles-container for visual feedback */
+  z-index: 1000 !important;
 }
 
-/* Handles Wrapper */
-/* We append a specially positioned div for handles ON TOP of or WITHIN the updated DOM
-   Actually simpler: The 'selected' class adds styles, and we append handle divs inside the element if selected
-   OR we use a separate overlay. 
-   Let's append child divs for handles when selected.
-*/
+/* SELECTION HANDLES */
 .resize-handle {
   position: absolute;
   width: 10px;
@@ -288,12 +129,32 @@ button {
   border: 2px solid var(--primary);
   border-radius: 50%;
   z-index: 9999;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.handle-nw { top: -6px; left: -6px; cursor: nw-resize; }
-.handle-ne { top: -6px; right: -6px; cursor: ne-resize; }
-.handle-sw { bottom: -6px; left: -6px; cursor: sw-resize; }
-.handle-se { bottom: -6px; right: -6px; cursor: se-resize; }
+.handle-nw {
+  top: -6px;
+  left: -6px;
+  cursor: nw-resize;
+}
+
+.handle-ne {
+  top: -6px;
+  right: -6px;
+  cursor: ne-resize;
+}
+
+.handle-sw {
+  bottom: -6px;
+  left: -6px;
+  cursor: sw-resize;
+}
+
+.handle-se {
+  bottom: -6px;
+  right: -6px;
+  cursor: se-resize;
+}
 
 .rotate-handle {
   position: absolute;
@@ -307,7 +168,11 @@ button {
   cursor: grab;
   z-index: 9999;
 }
-.rotate-handle:active { cursor: grabbing; }
+
+.rotate-handle:active {
+  cursor: grabbing;
+}
+
 .rotate-stick {
   position: absolute;
   width: 2px;
@@ -317,180 +182,4 @@ button {
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none;
-}
-
-/* --- Right Sidebar (Properties/Layers) --- */
-.right-panel {
-  grid-area: properties;
-  background: white;
-  border-left: 1px solid var(--border-light);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.panel-section {
-  padding: 20px;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.empty-state {
-  color: var(--text-muted);
-  font-size: 14px;
-  text-align: center;
-  padding: 20px 0;
-  font-style: italic;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* Property Inputs */
-.prop-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.prop-input-group label, .prop-row label, .prop-col label {
-  display: block;
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-
-.prop-input-group input, .prop-row input[type="number"], textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  background: #FAFAFC;
-  color: var(--text-main);
-  font-size: 13px;
-}
-.prop-input-group input:focus, textarea:focus {
-  border-color: var(--primary);
-  background: white;
-}
-
-.badge {
-  background: #EFEEFF;
-  color: var(--primary);
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.prop-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.prop-col {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 16px;
-}
-
-.color-picker-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #FAFAFC;
-  padding: 4px 8px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-}
-input[type="color"] {
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  background: transparent;
-}
-#prop-color-hex {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-/* Layers List */
-.layers-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.layers-toolbar {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.layers-toolbar button {
-  padding: 4px 8px;
-  font-size: 12px;
-  background: #F0F0F0;
-  border-radius: 4px;
-}
-.layers-toolbar button:hover {
-  background: #E0E0E0;
-}
-
-.layers-list {
-  list-style: none;
-  overflow-y: auto;
-  flex: 1;
-  padding-right: 4px;
-}
-.layer-item {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  margin-bottom: 4px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--text-main);
-  transition: background 0.1s;
-}
-.layer-item:hover {
-  background: #F9F9F9;
-}
-.layer-item.active {
-  background: #EEECFF; /* Light primary */
-  color: var(--primary);
-  font-weight: 500;
-}
-.layer-icon {
-  margin-right: 8px;
-  font-size: 12px;
-}
-
-/* --- Scrollbar --- */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #E0E0E0;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #D0D0D0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 900px) {
-  .app-container {
-    grid-template-columns: 60px 1fr 220px;
-  }
 }
