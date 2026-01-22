@@ -469,9 +469,16 @@ function onCanvasMouseDown(e) {
 }
 
 function startInteraction(e, handle) {
-    appState.isResizing = handle.classList.contains('resize-handle');
-    appState.isRotating = handle.classList.contains('rotate-handle');
-    appState.resizeHandle = handle.dataset.handle;
+    // Check if the clicked element or its parent is a resize/rotate handle
+    const resizeHandle = handle.closest('.resize-handle');
+    const rotateHandle = handle.closest('.rotate-handle');
+    
+    appState.isResizing = !!resizeHandle;
+    appState.isRotating = !!rotateHandle;
+    
+    if (resizeHandle) {
+        appState.resizeHandle = resizeHandle.dataset.handle;
+    }
 
     const el = appState.elements.find(x => x.id === appState.selectedId);
     if (!el) return;
@@ -490,6 +497,7 @@ function startDrag(e, id) {
 function onGlobalMouseMove(e) {
     if (!appState.selectedId) return;
     const el = appState.elements.find(x => x.id === appState.selectedId);
+    if (!el) return;
 
     if (appState.isDragging) {
         const dx = e.clientX - appState.dragStart.x;
@@ -501,9 +509,11 @@ function onGlobalMouseMove(e) {
         });
     }
     else if (appState.isResizing) {
+        e.preventDefault();
         handleResize(e, el);
     }
     else if (appState.isRotating) {
+        e.preventDefault();
         handleRotate(e, el);
     }
 }
@@ -512,22 +522,48 @@ function handleResize(e, el) {
     const dx = e.clientX - appState.dragStart.x;
     const dy = e.clientY - appState.dragStart.y;
 
-    // Simple non-rotated resize logic for now
-    // (Improving this would require matrix math for rotated resizing)
     const init = appState.initialElProps;
     let newW = init.width;
     let newH = init.height;
+    let newX = init.x;
+    let newY = init.y;
 
-    if (appState.resizeHandle.includes('e')) newW = init.width + dx;
-    if (appState.resizeHandle.includes('w')) newW = init.width - dx; // This doesn't shift x, so it grows right. 
-    // (Improved resize requires shifting x/y when resizing from left/top)
+    // Handle horizontal resize
+    if (appState.resizeHandle.includes('e')) {
+        newW = init.width + dx;
+    }
+    if (appState.resizeHandle.includes('w')) {
+        newW = init.width - dx;
+        newX = init.x + dx;
+    }
 
-    if (appState.resizeHandle.includes('s')) newH = init.height + dy;
-    if (appState.resizeHandle.includes('n')) newH = init.height - dy;
+    // Handle vertical resize
+    if (appState.resizeHandle.includes('s')) {
+        newH = init.height + dy;
+    }
+    if (appState.resizeHandle.includes('n')) {
+        newH = init.height - dy;
+        newY = init.y + dy;
+    }
+
+    // Apply minimum size constraints
+    const minSize = CONFIG.MIN_SIZE;
+    if (newW < minSize) {
+        const diff = minSize - newW;
+        if (appState.resizeHandle.includes('w')) newX -= diff;
+        newW = minSize;
+    }
+    if (newH < minSize) {
+        const diff = minSize - newH;
+        if (appState.resizeHandle.includes('n')) newY -= diff;
+        newH = minSize;
+    }
 
     updateElement(el.id, {
-        width: Math.max(CONFIG.MIN_SIZE, newW),
-        height: Math.max(CONFIG.MIN_SIZE, newH)
+        x: newX,
+        y: newY,
+        width: newW,
+        height: newH
     });
 }
 
